@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Chatbot Simples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .status {
+            background: #e8f4ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #007bff;
+        }
+        .debug {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Teste do Chatbot</h1>
+        
+        <div class="status">
+            <strong>Status:</strong> <span id="status">Carregando...</span>
+        </div>
+        
+        <div class="debug" id="debug">
+            Aguardando carregamento do script...
+        </div>
+        
+        <p><strong>Instruções:</strong></p>
+        <ul>
+            <li>O chatbot deve aparecer como um ícone azul no canto inferior direito</li>
+            <li>Clique no ícone para abrir a janela de chat</li>
+            <li>Digite uma mensagem para testar</li>
+        </ul>
+    </div>
+
+    <script>
+        // Debug script para verificar carregamento
+        document.addEventListener('DOMContentLoaded', () => {
+            const debugDiv = document.getElementById('debug');
+            const statusSpan = document.getElementById('status');
+            
+            debugDiv.innerHTML = 'DOM carregado. Verificando script do chatbot...';
+            
+            // Verificar se o script foi carregado
+            setTimeout(() => {
+                const chatContainer = document.getElementById('chat-container');
+                if (chatContainer) {
+                    statusSpan.textContent = '✅ Chatbot carregado com sucesso!';
+                    statusSpan.style.color = 'green';
+                    debugDiv.innerHTML += '<br>✅ Container do chat encontrado';
+                } else {
+                    statusSpan.textContent = '❌ Erro: Chatbot não carregou';
+                    statusSpan.style.color = 'red';
+                    debugDiv.innerHTML += '<br>❌ Container do chat não encontrado';
+                }
+                
+                // Verificar se os estilos foram aplicados
+                const chatBubble = document.getElementById('chat-bubble');
+                if (chatBubble) {
+                    const styles = window.getComputedStyle(chatBubble);
+                    debugDiv.innerHTML += '<br>✅ Ícone do chat encontrado';
+                    debugDiv.innerHTML += '<br>Posição: ' + styles.position;
+                    debugDiv.innerHTML += '<br>Cor de fundo: ' + styles.backgroundColor;
+                } else {
+                    debugDiv.innerHTML += '<br>❌ Ícone do chat não encontrado';
+                }
+            }, 1000);
+        });
+    </script>
+
+    <!-- Script do Chatbot -->
+    <script src="http://127.0.0.1:8000/static/chat.js" data-chatbot-id="7d26f671-fff9-44a7-bcd6-4f65984364a2" data-welcome-message="Olá! Como posso ajudar?" defer></script>
+    
+    <!-- CSS do Chatbot -->
+    <link rel="stylesheet" href="http://127.0.0.1:8000/static/chat.css">
+</body>
+</html>

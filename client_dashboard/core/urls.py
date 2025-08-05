@@ -1,0 +1,11 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('register/', views.register, name='register'),
+    path('', views.home, name='home'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('embed/<uuid:chatbot_id>/', views.chat_embed_view, name='chat_embed'),
+    path('api/chat/', views.chat_api, name='chat_api'),
+    path('api/v1/chat/', views.chat_proxy_api_view, name='chat_proxy_api'),
+]

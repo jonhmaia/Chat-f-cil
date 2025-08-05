@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página com Chatbot</title>
+    <!-- CSS do Chatbot -->
+    <link rel="stylesheet" href="http://127.0.0.1:8000/static/chat.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        p {
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .chat-info {
+            background-color: #e8f4ff;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bem-vindo à nossa página!</h1>
+        
+        <p>Esta é uma página web com um chatbot integrado. O chatbot está disponível para ajudá-lo com suas dúvidas e fornecer informações úteis.</p>
+        
+        <div class="chat-info">
+            <strong>💬 Chatbot Ativo</strong>
+            <p>O chatbot está carregado e pronto para uso. Procure pelo ícone de chat na tela para iniciar uma conversa.</p>
+        </div>
+        
+        <p>Você pode navegar pela página normalmente, e o chatbot permanecerá disponível para interação a qualquer momento.</p>
+        
+        <h2>Funcionalidades</h2>
+        <ul>
+            <li>Suporte em tempo real via chatbot</li>
+            <li>Interface amigável e responsiva</li>
+            <li>Mensagem de boas-vindas personalizada</li>
+            <li>Integração perfeita com a página</li>
+        </ul>
+    </div>
+
+    <!-- Script do Chatbot -->
+    <script src="http://127.0.0.1:8000/static/chat.js" data-chatbot-id="7d26f671-fff9-44a7-bcd6-4f65984364a2" data-welcome-message="Olá! Como posso ajudar?" defer></script>
+</body>
+</html>

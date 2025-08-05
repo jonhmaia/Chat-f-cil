@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página com Chatbot - Completo</title>
+    <style>
+        /* Estilos da página */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        p {
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .chat-info {
+            background-color: #e8f4ff;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+            margin: 20px 0;
+        }
+        
+        /* Estilos do Chatbot */
+        :root {
+            --primary-color: #007bff;
+            --chat-background: #ffffff;
+            --font-family: Arial, sans-serif;
+            --bot-message-bg: #f1f1f1;
+            --user-message-bg: #e1f5fe;
+        }
+
+        #chat-bubble {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 9998;
+        }
+
+        #chat-bubble svg {
+            width: 32px;
+            height: 32px;
+            fill: white;
+        }
+
+        #chat-window {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background-color: var(--chat-background);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            z-index: 9999;
+        }
+
+        #chat-window.active {
+            display: flex;
+        }
+
+        .chat-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            padding: 10px 15px;
+            border-radius: 18px;
+            max-width: 80%;
+            line-height: 1.4;
+        }
+
+        .message.bot {
+            background-color: var(--bot-message-bg);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.user {
+            background-color: var(--user-message-bg);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input-form {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        #chat-input {
+            flex-grow: 1;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            padding: 10px 15px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        #chat-input:focus {
+            border-color: var(--primary-color);
+        }
+
+        #send-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #send-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bem-vindo à nossa página!</h1>
+        
+        <p>Esta é uma página web com um chatbot integrado. O chatbot está disponível para ajudá-lo com suas dúvidas e fornecer informações úteis.</p>
+        
+        <div class="chat-info">
+            <strong>💬 Chatbot Ativo</strong>
+            <p>O chatbot está carregado e pronto para uso. Procure pelo ícone de chat azul no canto inferior direito da tela para iniciar uma conversa.</p>
+        </div>
+        
+        <p>Você pode navegar pela página normalmente, e o chatbot permanecerá disponível para interação a qualquer momento.</p>
+        
+        <h2>Funcionalidades</h2>
+        <ul>
+            <li>Suporte em tempo real via chatbot</li>
+            <li>Interface amigável e responsiva</li>
+            <li>Mensagem de boas-vindas personalizada</li>
+            <li>Integração perfeita com a página</li>
+        </ul>
+        
+        <h2>Como usar</h2>
+        <ol>
+            <li>Clique no ícone azul do chat no canto inferior direito</li>
+            <li>Digite sua mensagem na caixa de texto</li>
+            <li>Pressione Enter ou clique no botão de enviar</li>
+            <li>Aguarde a resposta do assistente virtual</li>
+        </ol>
+    </div>
+
+    <!-- Script do Chatbot incorporado -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const scriptTag = document.querySelector('script[data-chatbot-id]');
+            const chatbotId = '7d26f671-fff9-44a7-bcd6-4f65984364a2';
+            const welcomeMessage = 'Olá! Como posso ajudar?';
+
+            if (!chatbotId) {
+                console.error('Chatbot ID não encontrado.');
+                return;
+            }
+
+            const chatContainer = document.createElement('div');
+            chatContainer.id = 'chat-container';
+            document.body.appendChild(chatContainer);
+
+            const chatIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>`;
+            const sendIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>`;
+
+            // Estrutura HTML do chat
+            chatContainer.innerHTML = `
+                <div id="chat-bubble">${chatIcon}</div>
+                <div id="chat-window">
+                    <div class="chat-header">Assistente Virtual</div>
+                    <div class="chat-messages">
+                        <div class="message bot">${welcomeMessage}</div>
+                    </div>
+                    <form class="chat-input-form">
+                        <input type="text" id="chat-input" placeholder="Digite sua mensagem..." autocomplete="off">
+                        <button type="submit" id="send-btn">${sendIcon}</button>
+                    </form>
+                </div>
+            `;
+
+            const chatBubble = document.getElementById('chat-bubble');
+            const chatWindow = document.getElementById('chat-window');
+            const chatMessages = document.querySelector('.chat-messages');
+            const chatInputForm = document.querySelector('.chat-input-form');
+            const chatInput = document.getElementById('chat-input');
+            
+            // Eventos
+            chatBubble.addEventListener('click', () => {
+                chatWindow.classList.toggle('active');
+                if (chatWindow.classList.contains('active')) {
+                    chatInput.focus();
+                }
+            });
+
+            chatInputForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const messageText = chatInput.value.trim();
+                if (messageText) {
+                    // Adicionar mensagem do usuário
+                    const userMessage = document.createElement('div');
+                    userMessage.className = 'message user';
+                    userMessage.textContent = messageText;
+                    chatMessages.appendChild(userMessage);
+                    
+                    // Limpar input
+                    chatInput.value = '';
+                    
+                    // Scroll para baixo
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    // Simular resposta do bot (você pode substituir pela chamada real da API)
+                    setTimeout(() => {
+                        const botMessage = document.createElement('div');
+                        botMessage.className = 'message bot';
+                        botMessage.textContent = 'Obrigado pela sua mensagem! Esta é uma resposta de exemplo. Em breve você receberá uma resposta personalizada.';
+                        chatMessages.appendChild(botMessage);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 1000);
+                }
+            });
+
+            console.log('✅ Chatbot carregado com sucesso!');
+        });
+    </script>
+</body>
+</html>
