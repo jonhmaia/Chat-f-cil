@@ -64,18 +64,21 @@ document.addEventListener('DOMContentLoaded', () => {
     async function sendMessage(userMessage) {
         // Exibir a mensagem do usuário imediatamente
         addMessage(userMessage, 'user');
-        const messageToSend = chatInput.value;
+        const messageToSend = userMessage;
         chatInput.value = '';
 
         try {
-            // Fazer a requisição fetch para o backend proxy
-            const response = await fetch('/api/chat/', {
+            // Fazer a requisição fetch para o backend proxy usando a nova API
+            const response = await fetch('/api/v1/chat/', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-Client-ID': chatbotId
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ message: messageToSend })
+                body: JSON.stringify({ 
+                    chatbot_id: chatbotId,
+                    message: messageToSend,
+                    timestamp: new Date().toISOString()
+                })
             });
 
             if (!response.ok) {
@@ -84,8 +87,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
             
-            // Exibir a resposta da IA
-            const aiReply = data.reply || 'Não recebi uma resposta válida.';
+            // Exibir a resposta da IA - verificar diferentes formatos de resposta
+            let aiReply;
+            if (data.reply) {
+                aiReply = data.reply;
+            } else if (data.mensagem) {
+                aiReply = data.mensagem;
+            } else if (data.message) {
+                aiReply = data.message;
+            } else if (data.response) {
+                aiReply = data.response;
+            } else {
+                aiReply = 'Não recebi uma resposta válida.';
+            }
+            
             addMessage(aiReply, 'bot');
 
         } catch (error) {

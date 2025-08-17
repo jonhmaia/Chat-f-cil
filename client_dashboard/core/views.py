@@ -183,10 +183,28 @@ def chat_proxy_api_view(request):
                 # Tentar parsear resposta JSON do webhook
                 try:
                     webhook_data = webhook_response.json()
+                    
+                    # Garantir que sempre há um campo 'reply' na resposta
+                    if 'reply' not in webhook_data:
+                        if 'mensagem' in webhook_data:
+                            webhook_data['reply'] = webhook_data['mensagem']
+                        elif 'message' in webhook_data:
+                            webhook_data['reply'] = webhook_data['message']
+                        elif 'response' in webhook_data:
+                            webhook_data['reply'] = webhook_data['response']
+                        else:
+                            # Se não encontrar nenhum campo conhecido, usar o primeiro valor string
+                            for key, value in webhook_data.items():
+                                if isinstance(value, str) and value.strip():
+                                    webhook_data['reply'] = value
+                                    break
+                            else:
+                                webhook_data['reply'] = 'Resposta recebida mas formato não reconhecido.'
+                    
                 except json.JSONDecodeError:
                     # Se não for JSON válido, retornar texto como resposta
                     webhook_data = {
-                        'reply': webhook_response.text,
+                        'reply': webhook_response.text.strip() or 'Resposta vazia do webhook.',
                         'status': 'success'
                     }
                 

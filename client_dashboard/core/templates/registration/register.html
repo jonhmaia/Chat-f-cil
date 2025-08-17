@@ -105,66 +105,49 @@
                     </div>
                 {% endif %}
                 
-                {% load form_tags %}
-                 <form method="post">
+                <form method="post">
                      {% csrf_token %}
                     
-                    {% for field in form %}
-                        <div class="form-floating mb-3">
-                            {% if field.name == 'username' %}
-                                {{ field|add_class:"form-control" }}
-                                <label for="{{ field.id_for_label }}">
-                                    <i class="bi bi-person me-1"></i>
-                                    {{ field.label }}
-                                </label>
-                                {% if field.help_text %}
-                                    <div class="password-help mt-1">
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        {{ field.help_text }}
-                                    </div>
-                                {% endif %}
-                            {% elif field.name == 'email' %}
-                                {{ field|add_class:"form-control" }}
-                                <label for="{{ field.id_for_label }}">
-                                    <i class="bi bi-envelope me-1"></i>
-                                    {{ field.label }}
-                                </label>
-                            {% elif field.name == 'password1' %}
-                                {{ field|add_class:"form-control" }}
-                                <label for="{{ field.id_for_label }}">
-                                    <i class="bi bi-lock me-1"></i>
-                                    {{ field.label }}
-                                </label>
-                                {% if field.help_text %}
-                                    <div class="password-help mt-1">
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        {{ field.help_text|safe }}
-                                    </div>
-                                {% endif %}
-                            {% elif field.name == 'password2' %}
-                                {{ field|add_class:"form-control" }}
-                                <label for="{{ field.id_for_label }}">
-                                    <i class="bi bi-lock-fill me-1"></i>
-                                    {{ field.label }}
-                                </label>
-                                {% if field.help_text %}
-                                    <div class="password-help mt-1">
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        {{ field.help_text }}
-                                    </div>
-                                {% endif %}
-                            {% else %}
-                                {{ field|add_class:"form-control" }}
-                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                {% if field.help_text %}
-                                    <div class="password-help mt-1">
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        {{ field.help_text }}
-                                    </div>
-                                {% endif %}
-                            {% endif %}
+                    <div class="form-floating mb-3">
+                        <input type="text" name="username" maxlength="150" required="" id="id_username" class="form-control" placeholder="Nome de usuário">
+                        <label for="id_username">
+                            <i class="bi bi-person me-1"></i>
+                            Nome de usuário
+                        </label>
+                        <div class="password-help mt-1">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Obrigatório. 150 caracteres ou menos. Apenas letras, dígitos e @/./+/-/_ .
                         </div>
-                    {% endfor %}
+                    </div>
+                    
+                    <div class="form-floating mb-3">
+                        <input type="password" name="password1" required="" id="id_password1" class="form-control" placeholder="Senha">
+                        <label for="id_password1">
+                            <i class="bi bi-lock me-1"></i>
+                            Senha
+                        </label>
+                        <div class="password-help mt-1">
+                            <i class="bi bi-info-circle me-1"></i>
+                            <ul class="mb-0">
+                                <li>Sua senha não pode ser muito similar às suas outras informações pessoais.</li>
+                                <li>Sua senha deve conter pelo menos 8 caracteres.</li>
+                                <li>Sua senha não pode ser uma senha comumente usada.</li>
+                                <li>Sua senha não pode ser inteiramente numérica.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="form-floating mb-3">
+                        <input type="password" name="password2" required="" id="id_password2" class="form-control" placeholder="Confirmação de senha">
+                        <label for="id_password2">
+                            <i class="bi bi-lock-fill me-1"></i>
+                            Confirmação de senha
+                        </label>
+                        <div class="password-help mt-1">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Digite a mesma senha de antes, para verificação.
+                        </div>
+                    </div>
                     
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary btn-register">

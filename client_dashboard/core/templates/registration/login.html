@@ -103,21 +103,20 @@
                     </div>
                 {% endif %}
                 
-                {% load form_tags %}
-                 <form method="post">
+                <form method="post">
                      {% csrf_token %}
                     
                     <div class="form-floating mb-3">
-                        {{ form.username }}
-                        <label for="{{ form.username.id_for_label }}">
+                        <input type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" required="" id="id_username" class="form-control" placeholder="Usuário">
+                        <label for="id_username">
                             <i class="bi bi-person me-1"></i>
                             Usuário
                         </label>
                     </div>
                     
                     <div class="form-floating mb-4">
-                        {{ form.password }}
-                        <label for="{{ form.password.id_for_label }}">
+                        <input type="password" name="password" autocomplete="current-password" required="" id="id_password" class="form-control" placeholder="Senha">
+                        <label for="id_password">
                             <i class="bi bi-lock me-1"></i>
                             Senha
                         </label>
