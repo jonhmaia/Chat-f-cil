@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
-from django.http import JsonResponse
+from django.contrib import messages
+from django.http import JsonResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 import json
@@ -15,13 +16,15 @@ def register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # Cria um ChatbotConfig para o novo usuário com valores padrão
-            ChatbotConfig.objects.create(user=user)
+            # Cria um ChatbotConfig inicial para o novo usuário
+            ChatbotConfig.objects.create(
+                user=user,
+                name='Meu Primeiro Chatbot'
+            )
             # Loga o usuário automaticamente após o registro
             login(request, user)
-            # Redireciona para uma página inicial ou de dashboard (ainda a ser criada)
-            # Por enquanto, vamos redirecionar para a página de login
-            return redirect('login')
+            # Redireciona para a lista de chatbots
+            return redirect('chatbot_list')
     else:
         form = UserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
@@ -30,24 +33,101 @@ from .forms import ChatbotConfigForm
 
 @login_required
 def home(request):
-    chatbot_config = ChatbotConfig.objects.get(user=request.user)
-    return render(request, 'home.html', {'config': chatbot_config})
+    # Redireciona para a lista de chatbots
+    return redirect('chatbot_list')
 
 @login_required
-def dashboard(request):
-    config = get_object_or_404(ChatbotConfig, user=request.user)
+def chatbot_list(request):
+    """Lista todos os chatbots do usuário"""
+    chatbots = ChatbotConfig.objects.filter(user=request.user)
+    return render(request, 'chatbot_list.html', {'chatbots': chatbots})
+
+@login_required
+def create_chatbot(request):
+    """Cria um novo chatbot"""
     if request.method == 'POST':
-        form = ChatbotConfigForm(request.POST, instance=config)
+        form = ChatbotConfigForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('home')
+            chatbot = form.save(commit=False)
+            chatbot.user = request.user
+            chatbot.save()
+            return redirect('dashboard', chatbot_id=chatbot.id)
+    else:
+        form = ChatbotConfigForm()
+    return render(request, 'create_chatbot.html', {'form': form})
+
+@login_required
+def dashboard(request, chatbot_id):
+    """Dashboard para personalizar um chatbot específico"""
+    config = get_object_or_404(ChatbotConfig, id=chatbot_id, user=request.user)
+    if request.method == 'POST':
+        print(f"DEBUG: Requisição POST recebida para chatbot {chatbot_id}")
+        print(f"DEBUG: Dados POST: {dict(request.POST)}")
+        print(f"DEBUG: Content-Type: {request.content_type}")
+        
+        # Check if it's an AJAX request for real-time updates
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        if is_ajax and ('primary_color' in request.POST or 'welcome_message' in request.POST or 'webhook_url' in request.POST):
+            print("DEBUG: Detectada requisição AJAX para atualização em tempo real")
+            try:
+                # Update only the specific fields for real-time customization
+                if 'primary_color' in request.POST:
+                    print(f"DEBUG: Atualizando primary_color: {request.POST['primary_color']}")
+                    config.primary_color = request.POST['primary_color']
+                if 'welcome_message' in request.POST:
+                    print(f"DEBUG: Atualizando welcome_message: {request.POST['welcome_message']}")
+                    config.welcome_message = request.POST['welcome_message']
+                if 'webhook_url' in request.POST:
+                    print(f"DEBUG: Atualizando webhook_url: {request.POST['webhook_url']}")
+                    config.webhook_url = request.POST['webhook_url']
+                config.save()
+                print("DEBUG: Configurações salvas com sucesso!")
+                return JsonResponse({'success': True, 'message': 'Configurações salvas com sucesso!'})
+            except Exception as e:
+                return JsonResponse({'success': False, 'error': str(e)})
+        else:
+            # Regular form submission
+            form = ChatbotConfigForm(request.POST, instance=config)
+            if form.is_valid():
+                form.save()
+                return redirect('chatbot_list')
     else:
         form = ChatbotConfigForm(instance=config)
-    return render(request, 'dashboard.html', {'form': form})
+    return render(request, 'dashboard.html', {'form': form, 'chatbot': config})
+
+@login_required
+def delete_chatbot(request, chatbot_id):
+    """View para excluir um chatbot específico"""
+    chatbot = get_object_or_404(ChatbotConfig, id=chatbot_id, user=request.user)
+    
+    if request.method == 'POST':
+        # Verificar se o usuário tem pelo menos um chatbot restante
+        user_chatbots_count = ChatbotConfig.objects.filter(user=request.user).count()
+        
+        if user_chatbots_count <= 1:
+            messages.error(request, 'Você deve ter pelo menos um chatbot. Não é possível excluir o último chatbot.')
+            return redirect('chatbot_list')
+        
+        chatbot_name = chatbot.name
+        chatbot.delete()
+        messages.success(request, f'Chatbot "{chatbot_name}" foi excluído com sucesso.')
+        return redirect('chatbot_list')
+    
+    # Se não for POST, redirecionar para a lista
+    return redirect('chatbot_list')
 
 def chat_embed_view(request, chatbot_id):
     config = get_object_or_404(ChatbotConfig, id=chatbot_id)
-    return render(request, 'chat_embed.html', {'config': config, 'chatbot_id': chatbot_id})
+    
+    # Allow dynamic override of config values for preview
+    preview_config = {
+        'primary_color': request.GET.get('primary_color', config.primary_color),
+        'welcome_message': request.GET.get('welcome_message', config.welcome_message),
+        'name': config.name,
+        'id': config.id
+    }
+    
+    return render(request, 'chat_embed.html', {'config': preview_config, 'chatbot_id': chatbot_id})
 
 @csrf_exempt
 @require_http_methods(["POST"])

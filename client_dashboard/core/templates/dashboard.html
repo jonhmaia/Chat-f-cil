@@ -3,49 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Personalizar Chatbot</title>
-    
-    <!-- Bootstrap CSS -->
+    <title>Dashboard do Cliente - Chat Fácil</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    
     <style>
-        .form-container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .color-input-group {
-            position: relative;
-        }
-        .color-preview {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            border: 2px solid #dee2e6;
-            cursor: pointer;
-        }
         .navbar-brand {
-            font-weight: 600;
+            font-weight: bold;
         }
-        .card {
+        .config-card {
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
             border: 1px solid rgba(0, 0, 0, 0.125);
         }
+        .preview-iframe {
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 0.375rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+        .color-preview {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-left: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        /* Responsive iframe container */
+        .preview-container {
+            position: relative;
+            width: 100%;
+            height: 75vh;
+            min-height: 600px;
+            max-height: 900px;
+            overflow: hidden;
+        }
+        
+        .preview-iframe {
+            border: none;
+            border-radius: 0 0 8px 8px;
+            height: 100%;
+            min-height: 600px;
+        }
+        
+        /* Auto-adjust card heights */
+        .config-card {
+            height: auto !important;
+        }
+        
+        .card-body {
+            min-height: auto;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .preview-container {
+                height: 70vh;
+                min-height: 550px;
+                max-height: 700px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .preview-container {
+                height: 65vh;
+                min-height: 500px;
+                max-height: 600px;
+            }
+        }
     </style>
 </head>
-<body class="bg-light">
+<body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">
+            <a class="navbar-brand" href="{% url 'chatbot_list' %}">
                 <i class="bi bi-chat-dots-fill me-2"></i>
                 Chat Fácil
             </a>
             <div class="navbar-nav ms-auto">
-                <a href="{% url 'home' %}" class="btn btn-outline-light btn-sm">
-                    <i class="bi bi-house-door me-1"></i>
-                    Voltar para Home
+                <a class="nav-link text-white me-3" href="{% url 'chatbot_list' %}">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Voltar para Lista
                 </a>
             </div>
         </div>
@@ -53,116 +97,128 @@
 
     <!-- Main Content -->
     <div class="container mt-4">
-        <div class="form-container">
-            <!-- Header -->
-            <div class="text-center mb-4">
-                <h2 class="text-primary">
-                    <i class="bi bi-palette me-2"></i>
-                    Personalize seu Chatbot
-                </h2>
-                <p class="text-muted">Configure a aparência e comportamento do seu chatbot</p>
-            </div>
 
-            <!-- Form Card -->
-            <div class="card">
-                <div class="card-header bg-white">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-gear-fill me-2"></i>
-                        Configurações
-                    </h5>
-                </div>
-                <div class="card-body">
-                     {% load form_tags %}
-                     <form method="post">
-                         {% csrf_token %}
+
+        <div class="row">
+            <!-- Configuration Section -->
+            <div class="col-lg-6 mb-4">
+                <div class="card config-card h-100">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-gear-fill me-2"></i>
+                            Configurações Atuais
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="d-flex align-items-center p-3 bg-light rounded">
+                                    <i class="bi bi-fingerprint text-primary me-3 fs-4"></i>
+                                    <div>
+                                        <small class="text-muted">ID do Chatbot</small>
+                                        <div class="fw-bold font-monospace">{{ chatbot.id }}</div>
                         
-                        {% for field in form %}
-                            <div class="mb-3">
-                                <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
-                                    {% if field.name == 'webhook_url' %}
-                                        <i class="bi bi-link-45deg me-1"></i>
-                                    {% elif field.name == 'primary_color' %}
-                                        <i class="bi bi-palette-fill me-1"></i>
-                                    {% elif field.name == 'welcome_message' %}
-                                        <i class="bi bi-chat-quote-fill me-1"></i>
-                                    {% endif %}
-                                    {{ field.label }}
-                                </label>
-                                
-                                {% if field.name == 'primary_color' %}
+                        <!-- Formulário de Personalização -->
+                        <div class="mt-4">
+                            <h6 class="text-muted mb-3">
+                                <i class="bi bi-sliders me-2"></i>
+                                Personalização em Tempo Real
+                            </h6>
+                            <form id="customization-form">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="primary-color" class="form-label">Cor Primária</label>
                                     <div class="input-group">
-                                        {{ field|add_class:"form-control" }}
-                                        <span class="input-group-text p-1">
-                                            <div class="color-preview" 
-                                                 style="background-color: {{ field.value|default:'#007bff' }};" 
-                                                 onclick="document.getElementById('{{ field.id_for_label }}').click()">
-                                            </div>
-                                        </span>
+                                        <input type="color" class="form-control form-control-color" id="primary-color" value="{{ chatbot.primary_color }}" title="Escolha a cor primária">
+                                        <input type="text" class="form-control" id="primary-color-text" value="{{ chatbot.primary_color }}" placeholder="#00dbcd">
                                     </div>
-                                {% elif field.name == 'welcome_message' %}
-                                    {{ field|add_class:"form-control" }}
-                                    <div class="form-text">
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        Esta mensagem será exibida quando o usuário abrir o chat
-                                    </div>
-                                {% elif field.name == 'webhook_url' %}
-                                    {{ field|add_class:"form-control" }}
-                                    <div class="form-text">
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        URL para onde as mensagens do chat serão enviadas
-                                    </div>
-                                {% else %}
-                                    {{ field|add_class:"form-control" }}
-                                {% endif %}
-                                
-                                {% if field.help_text %}
-                                    <div class="form-text">{{ field.help_text }}</div>
-                                {% endif %}
-                                
-                                {% if field.errors %}
-                                    {% for error in field.errors %}
-                                        <div class="text-danger small mt-1">
-                                            <i class="bi bi-exclamation-triangle me-1"></i>
-                                            {{ error }}
-                                        </div>
-                                    {% endfor %}
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-                        
-                        <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-check-circle me-2"></i>
-                                Salvar Alterações
-                            </button>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="welcome-message" class="form-label">Mensagem de Boas-Vindas</label>
+                                    <textarea class="form-control" id="welcome-message" rows="2" placeholder="Digite a mensagem de boas-vindas">{{ chatbot.welcome_message }}</textarea>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-success" id="save-config">
+                                        <i class="bi bi-check-circle me-2"></i>
+                                        Salvar Configurações
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="row mt-4">
-                <div class="col-md-6">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <i class="bi bi-eye-fill text-primary fs-1 mb-2"></i>
-                            <h6 class="card-title">Visualizar</h6>
-                            <p class="card-text small text-muted">Veja como seu chatbot aparece</p>
-                            <a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm">
-                                Ir para Preview
-                            </a>
-                        </div>
+ 
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <i class="bi bi-code-slash text-success fs-1 mb-2"></i>
-                            <h6 class="card-title">Integrar</h6>
-                            <p class="card-text small text-muted">Obtenha o código de integração</p>
-                            <a href="{% url 'home' %}" class="btn btn-outline-success btn-sm">
-                                Ver Código
-                            </a>
+                            </div>
+                            <div class="col-12">
+                                <div class="p-3 bg-light rounded">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-link-45deg text-primary me-2 fs-4"></i>
+                                        <small class="text-muted">Webhook URL</small>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <input type="url" 
+                                               class="form-control" 
+                                               id="webhook-url" 
+                                               value="{{ chatbot.webhook_url|default:'' }}" 
+                                               placeholder="https://exemplo.com/webhook">
+                                        <button type="button" class="btn btn-primary" id="save-webhook">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            Salvar
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary" id="test-webhook">
+                                            <i class="bi bi-play-circle me-1"></i>
+                                            Testar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        
+
+                    </div>
+                </div>
+
+                <!-- Integration Code Section -->
+                <div class="card config-card mt-4">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-code-slash me-2"></i>
+                            Código de Integração
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Copie e cole o código abaixo no final da tag <code>&lt;body&gt;</code> do seu site:
+                        </p>
+                        {% load static %}
+                        <div class="code-block p-3">
+                            <code>&lt;script src="{{ request.scheme }}://{{ request.get_host }}{% static 'chat.js' %}" data-chatbot-id="{{ chatbot.id }}" data-welcome-message="{{ chatbot.welcome_message|escapejs }}" defer&gt;&lt;/script&gt;</code>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm mt-2" onclick="copyToClipboard()">
+                            <i class="bi bi-clipboard me-1"></i>
+                            Copiar Código
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="col-lg-6 mb-4">
+                <div class="card config-card">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-eye-fill me-2"></i>
+                            Pré-visualização do Chat
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="preview-container">
+                            <iframe src="{% url 'chat_embed' chatbot_id=chatbot.id %}" 
+                                    width="100%" 
+                                    class="preview-iframe">
+                            </iframe>
                         </div>
                     </div>
                 </div>
@@ -173,15 +229,301 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Color Picker Enhancement -->
+    <!-- Copy to Clipboard Function -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const colorInput = document.querySelector('input[type="color"]');
-            const colorPreview = document.querySelector('.color-preview');
+        function copyToClipboard() {
+            const codeElement = document.querySelector('.code-block code');
+            const textArea = document.createElement('textarea');
+            textArea.value = codeElement.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
             
-            if (colorInput && colorPreview) {
-                colorInput.addEventListener('change', function() {
-                    colorPreview.style.backgroundColor = this.value;
+            // Show feedback
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="bi bi-check me-1"></i>Copiado!';
+            button.classList.remove('btn-outline-primary');
+            button.classList.add('btn-success');
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.classList.remove('btn-success');
+                button.classList.add('btn-outline-primary');
+            }, 2000);
+        }
+
+        // Real-time customization functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const primaryColorPicker = document.getElementById('primary-color');
+            const primaryColorText = document.getElementById('primary-color-text');
+            const welcomeMessage = document.getElementById('welcome-message');
+            const previewIframe = document.querySelector('.preview-iframe');
+            const saveButton = document.getElementById('save-config');
+            const colorPreview = document.querySelector('.color-preview');
+            const colorDisplay = colorPreview && colorPreview.parentElement ? colorPreview.parentElement.querySelector('.fw-bold') : null;
+            const welcomeDisplayElement = document.querySelector('[data-welcome-display]');
+            const chatQuoteElement = document.querySelector('.bi-chat-quote-fill');
+            const welcomeDisplay = welcomeDisplayElement || 
+                (chatQuoteElement && chatQuoteElement.parentElement ? chatQuoteElement.parentElement.querySelector('.fw-bold') : null);
+
+            // Sync color picker and text input
+            primaryColorPicker.addEventListener('input', function() {
+                primaryColorText.value = this.value;
+                updatePreview();
+            });
+
+            primaryColorText.addEventListener('input', function() {
+                if (this.value.match(/^#[0-9A-F]{6}$/i)) {
+                    primaryColorPicker.value = this.value;
+                    updatePreview();
+                }
+            });
+
+            // Update preview on welcome message change
+            welcomeMessage.addEventListener('input', updatePreview);
+
+            function updatePreview() {
+                const color = primaryColorPicker.value;
+                const message = welcomeMessage.value;
+                
+                // Update color preview in the configuration display
+                if (colorPreview) {
+                    colorPreview.style.backgroundColor = color;
+                }
+                if (colorDisplay) {
+                    colorDisplay.innerHTML = color + ' <span class="color-preview" style="background-color: ' + color + ';"></span>';
+                }
+                
+                // Update welcome message display
+                if (welcomeDisplay) {
+                    welcomeDisplay.textContent = '"' + message + '"';
+                }
+                
+                // Update iframe with new parameters
+                if (previewIframe) {
+                    const currentSrc = previewIframe.src.split('?')[0];
+                    const newSrc = currentSrc + '?primary_color=' + encodeURIComponent(color) + 
+                                  '&welcome_message=' + encodeURIComponent(message);
+                    previewIframe.src = newSrc;
+                }
+            }
+
+            // Save configuration via AJAX
+            saveButton.addEventListener('click', function() {
+                const formData = new FormData();
+                formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+                formData.append('primary_color', primaryColorPicker.value);
+                formData.append('welcome_message', welcomeMessage.value);
+                
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Salvando...';
+                this.disabled = true;
+                
+                fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        return response.json();
+                    } else {
+                        throw new Error('Response is not JSON');
+                    }
+                })
+                .then(data => {
+                    if (data.success) {
+                        this.innerHTML = '<i class="bi bi-check-circle me-2"></i>Salvo!';
+                        this.classList.remove('btn-success');
+                        this.classList.add('btn-outline-success');
+                        
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.classList.remove('btn-outline-success');
+                            this.classList.add('btn-success');
+                            this.disabled = false;
+                        }, 2000);
+                    } else {
+                        throw new Error(data.error || 'Erro ao salvar');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    this.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>Erro!';
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-danger');
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.classList.remove('btn-danger');
+                        this.classList.add('btn-success');
+                        this.disabled = false;
+                    }, 3000);
+                });
+            });
+
+            // Save webhook via AJAX
+            const saveWebhookButton = document.getElementById('save-webhook');
+            const webhookInput = document.getElementById('webhook-url');
+            
+            console.log('Elementos encontrados:', {
+                saveWebhookButton: saveWebhookButton,
+                webhookInput: webhookInput
+            });
+            
+            if (saveWebhookButton && webhookInput) {
+                saveWebhookButton.addEventListener('click', function() {
+                    console.log('Botão de salvar webhook clicado');
+                    
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+                    if (!csrfToken) {
+                        console.error('Token CSRF não encontrado!');
+                        alert('Erro: Token CSRF não encontrado. Recarregue a página.');
+                        return;
+                    }
+                    
+                    const formData = new FormData();
+                    formData.append('csrfmiddlewaretoken', csrfToken.value);
+                    formData.append('webhook_url', webhookInput.value);
+                    
+                    console.log('Dados a serem enviados:', {
+                        webhook_url: webhookInput.value,
+                        csrf_token: csrfToken.value
+                    });
+                    
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Salvando...';
+                    this.disabled = true;
+                    
+                    fetch(window.location.href, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        console.log('Resposta recebida:', response.status, response.statusText);
+                        
+                        if (!response.ok) {
+                            console.error('Resposta não OK:', response.status);
+                            throw new Error(`Network response was not ok: ${response.status}`);
+                        }
+                        
+                        const contentType = response.headers.get('content-type');
+                        console.log('Content-Type:', contentType);
+                        
+                        if (contentType && contentType.includes('application/json')) {
+                            return response.json();
+                        } else {
+                            console.warn('Resposta não é JSON, tentando como texto');
+                            return response.text().then(text => {
+                                console.log('Resposta como texto:', text);
+                                throw new Error('Response is not JSON: ' + text.substring(0, 100));
+                            });
+                        }
+                    })
+                    .then(data => {
+                        console.log('Dados JSON recebidos:', data);
+                        
+                        if (data.success) {
+                            console.log('Webhook salvo com sucesso!');
+                            this.innerHTML = '<i class="bi bi-check-circle me-1"></i>Salvo!';
+                            this.classList.remove('btn-primary');
+                            this.classList.add('btn-outline-success');
+                            
+                            setTimeout(() => {
+                                this.innerHTML = originalText;
+                                this.classList.remove('btn-outline-success');
+                                this.classList.add('btn-primary');
+                                this.disabled = false;
+                            }, 2000);
+                        } else {
+                            console.error('Erro retornado pelo servidor:', data.error);
+                            throw new Error(data.error || 'Erro ao salvar webhook');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        this.innerHTML = '<i class="bi bi-exclamation-triangle me-1"></i>Erro!';
+                        this.classList.remove('btn-primary');
+                        this.classList.add('btn-danger');
+                        
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.classList.remove('btn-danger');
+                            this.classList.add('btn-primary');
+                            this.disabled = false;
+                        }, 3000);
+                    });
+                });
+            }
+            
+            // Funcionalidade de teste do webhook
+            const testWebhookButton = document.getElementById('test-webhook');
+            if (testWebhookButton) {
+                testWebhookButton.addEventListener('click', function() {
+                    const webhookInput = document.getElementById('webhook-url');
+                    const webhookUrl = webhookInput.value.trim();
+                    
+                    if (!webhookUrl) {
+                        alert('Por favor, insira uma URL de webhook antes de testar.');
+                        return;
+                    }
+                    
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Testando...';
+                    this.disabled = true;
+                    
+                    // Dados de teste para enviar ao webhook
+                    const testData = {
+                        message: 'Esta é uma mensagem de teste do chatbot',
+                        user_id: 'test_user_123',
+                        timestamp: new Date().toISOString(),
+                        test: true
+                    };
+                    
+                    fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(testData)
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            this.innerHTML = '<i class="bi bi-check-circle me-1"></i>Sucesso!';
+                            this.classList.remove('btn-outline-secondary');
+                            this.classList.add('btn-outline-success');
+                            
+                            setTimeout(() => {
+                                this.innerHTML = originalText;
+                                this.classList.remove('btn-outline-success');
+                                this.classList.add('btn-outline-secondary');
+                                this.disabled = false;
+                            }, 3000);
+                        } else {
+                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro no teste do webhook:', error);
+                        this.innerHTML = '<i class="bi bi-exclamation-triangle me-1"></i>Erro!';
+                        this.classList.remove('btn-outline-secondary');
+                        this.classList.add('btn-outline-danger');
+                        
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.classList.remove('btn-outline-danger');
+                            this.classList.add('btn-outline-secondary');
+                            this.disabled = false;
+                        }, 3000);
+                    });
                 });
             }
         });

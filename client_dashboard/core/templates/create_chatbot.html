@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Novo Chatbot - Chat Fácil</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .color-input-group {
+            position: relative;
+        }
+        .color-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+            cursor: pointer;
+        }
+        .navbar-brand {
+            font-weight: 600;
+        }
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: 1px solid rgba(0, 0, 0, 0.125);
+        }
+        .step-indicator {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="bi bi-chat-dots-fill me-2"></i>
+                Chat Fácil
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a href="{% url 'chatbot_list' %}" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Voltar para Lista
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="form-container">
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <div class="step-indicator mx-auto mb-3">
+                    <i class="bi bi-plus-lg"></i>
+                </div>
+                <h2 class="text-primary">
+                    Criar Novo Chatbot
+                </h2>
+                <p class="text-muted">Configure seu novo assistente virtual</p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-gear-fill me-2"></i>
+                        Configurações Iniciais
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Nome do Chatbot -->
+                        <div class="mb-4">
+                            <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold">
+                                <i class="bi bi-robot me-1"></i>
+                                {{ form.name.label }}
+                            </label>
+                            {{ form.name }}
+                            <div class="form-text">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Escolha um nome descritivo para identificar seu chatbot
+                            </div>
+                            {% if form.name.errors %}
+                                {% for error in form.name.errors %}
+                                    <div class="text-danger small mt-1">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <!-- Mensagem de Boas-vindas -->
+                        <div class="mb-4">
+                            <label for="{{ form.welcome_message.id_for_label }}" class="form-label fw-semibold">
+                                <i class="bi bi-chat-quote-fill me-1"></i>
+                                {{ form.welcome_message.label }}
+                            </label>
+                            {{ form.welcome_message }}
+                            <div class="form-text">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Esta mensagem será exibida quando o usuário abrir o chat
+                            </div>
+                            {% if form.welcome_message.errors %}
+                                {% for error in form.welcome_message.errors %}
+                                    <div class="text-danger small mt-1">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <!-- Cor Principal -->
+                        <div class="mb-4">
+                            <label for="{{ form.primary_color.id_for_label }}" class="form-label fw-semibold">
+                                <i class="bi bi-palette-fill me-1"></i>
+                                {{ form.primary_color.label }}
+                            </label>
+                            <div class="input-group">
+                                {{ form.primary_color }}
+                                <span class="input-group-text p-1">
+                                    <div class="color-preview" 
+                                         style="background-color: {{ form.primary_color.value|default:'#007bff' }};" 
+                                         onclick="document.getElementById('{{ form.primary_color.id_for_label }}').click()">
+                                    </div>
+                                </span>
+                            </div>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Escolha a cor que representa sua marca
+                            </div>
+                            {% if form.primary_color.errors %}
+                                {% for error in form.primary_color.errors %}
+                                    <div class="text-danger small mt-1">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <!-- URL do Webhook (Opcional) -->
+                        <div class="mb-4">
+                            <label for="{{ form.webhook_url.id_for_label }}" class="form-label fw-semibold">
+                                <i class="bi bi-link-45deg me-1"></i>
+                                {{ form.webhook_url.label }}
+                                <span class="badge bg-secondary ms-2">Opcional</span>
+                            </label>
+                            {{ form.webhook_url }}
+                            <div class="form-text">
+                                <i class="bi bi-info-circle me-1"></i>
+                                URL para onde as mensagens do chat serão enviadas (pode ser configurado depois)
+                            </div>
+                            {% if form.webhook_url.errors %}
+                                {% for error in form.webhook_url.errors %}
+                                    <div class="text-danger small mt-1">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Botões de Ação -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{% url 'chatbot_list' %}" class="btn btn-outline-secondary me-md-2">
+                                <i class="bi bi-x-circle me-2"></i>
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-2"></i>
+                                Criar Chatbot
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Dicas -->
+            <div class="card mt-4">
+                <div class="card-header bg-light">
+                    <h6 class="card-title mb-0">
+                        <i class="bi bi-lightbulb me-2"></i>
+                        Dicas para seu Chatbot
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex mb-3">
+                                <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                                <div>
+                                    <strong>Nome Descritivo</strong>
+                                    <p class="small text-muted mb-0">Use nomes como "Atendimento Vendas" ou "Suporte Técnico"</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex mb-3">
+                                <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                                <div>
+                                    <strong>Mensagem Acolhedora</strong>
+                                    <p class="small text-muted mb-0">Seja claro sobre como o chatbot pode ajudar</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex mb-3">
+                                <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                                <div>
+                                    <strong>Cores da Marca</strong>
+                                    <p class="small text-muted mb-0">Use as cores da sua empresa para manter consistência</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex mb-3">
+                                <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                                <div>
+                                    <strong>Webhook Opcional</strong>
+                                    <p class="small text-muted mb-0">Configure depois se não tiver a URL agora</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Color Picker Enhancement -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const colorInput = document.querySelector('input[type="color"]');
+            const colorPreview = document.querySelector('.color-preview');
+            
+            if (colorInput && colorPreview) {
+                colorInput.addEventListener('change', function() {
+                    colorPreview.style.backgroundColor = this.value;
+                });
+            }
+        });
+    </script>
+</body>
+</html>
