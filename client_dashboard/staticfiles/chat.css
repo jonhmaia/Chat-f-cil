@@ -1,0 +1,128 @@
+:root {
+    --primary-color: #007bff;
+    --chat-background: #ffffff;
+    --font-family: Arial, sans-serif;
+    --bot-message-bg: #f1f1f1;
+    --user-message-bg: #e1f5fe;
+}
+
+body {
+    font-family: var(--font-family);
+}
+
+#chat-bubble {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 9998;
+}
+
+#chat-bubble svg {
+    width: 32px;
+    height: 32px;
+    fill: white;
+}
+
+#chat-window {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 350px;
+    height: 500px;
+    background-color: var(--chat-background);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: none; /* Escondido por padrão */
+    flex-direction: column;
+    z-index: 9999;
+}
+
+#chat-window.active {
+    display: flex; /* Mostra a janela */
+}
+
+.chat-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 15px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message {
+    padding: 10px 15px;
+    border-radius: 18px;
+    max-width: 80%;
+    line-height: 1.4;
+}
+
+.message.bot {
+    background-color: var(--bot-message-bg);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+.message.user {
+    background-color: var(--user-message-bg);
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+.chat-input-form {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+#chat-input {
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 10px 15px;
+    outline: none;
+    font-size: 1rem;
+}
+
+#chat-input:focus {
+    border-color: var(--primary-color);
+}
+
+#send-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#send-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: white;
+}
