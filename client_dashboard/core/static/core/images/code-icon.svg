@@ -1,0 +1,31 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="codeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00c2ff;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#4169ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00c2ff;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="24" cy="24" r="20" fill="url(#codeGradient)" opacity="0.1" stroke="url(#codeGradient)" stroke-width="1"/>
+  
+  <!-- Code brackets -->
+  <path d="M14 16L8 24L14 32" stroke="url(#codeGradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#glow)"/>
+  <path d="M34 16L40 24L34 32" stroke="url(#codeGradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#glow)"/>
+  
+  <!-- Slash in the middle -->
+  <path d="M28 12L20 36" stroke="url(#codeGradient)" stroke-width="3" stroke-linecap="round" fill="none" filter="url(#glow)"/>
+  
+  <!-- Decorative dots -->
+  <circle cx="18" cy="20" r="1.5" fill="url(#codeGradient)" opacity="0.6"/>
+  <circle cx="30" cy="28" r="1.5" fill="url(#codeGradient)" opacity="0.6"/>
+  <circle cx="22" cy="30" r="1" fill="url(#codeGradient)" opacity="0.4"/>
+</svg>

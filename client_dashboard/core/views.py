@@ -11,6 +11,10 @@ import requests
 import httpx
 from .models import ChatbotConfig
 
+def landing_page(request):
+    """Landing page do BeckerChat"""
+    return render(request, 'landing.html')
+
 def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)

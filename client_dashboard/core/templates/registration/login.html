@@ -1,88 +1,262 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Chat Fácil</title>
+    <title>Login - MAIA LABS</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #4a90e2, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(74, 144, 226, 0.3), transparent),
+                radial-gradient(1px 1px at 90px 40px, #4a90e2, transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(74, 144, 226, 0.3), transparent),
+                radial-gradient(2px 2px at 160px 30px, #4a90e2, transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: sparkle 20s linear infinite;
+            opacity: 0.6;
+        }
+        
+        @keyframes sparkle {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-100px); }
+        }
+        
         .login-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 2rem 1rem;
+            position: relative;
+            z-index: 1;
         }
+        
         .login-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(74, 144, 226, 0.2);
+            border-radius: 20px;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(74, 144, 226, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
             overflow: hidden;
-            max-width: 400px;
+            max-width: 420px;
             width: 100%;
+            position: relative;
         }
+        
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #4a90e2, transparent);
+        }
+        
         .login-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.1) 0%, rgba(74, 144, 226, 0.05) 100%);
             color: white;
-            padding: 2rem;
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .brand-logo {
+            margin: 0 auto 1.5rem;
+            position: relative;
+            margin-bottom: 2rem;
             text-align: center;
         }
-        .login-body {
-            padding: 2rem;
+        
+        .brand-logo img {
+            display: block;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            box-shadow: 0 0 20px rgba(74, 144, 226, 0.3);
+            filter: drop-shadow(0 0 10px rgba(74, 144, 226, 0.5));
         }
-        .brand-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        
+        .back-to-home {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(74, 144, 226, 0.1);
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            border-radius: 10px;
+            padding: 0.5rem 1rem;
+            color: #4a90e2;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            cursor: pointer;
         }
-        .form-floating {
-            margin-bottom: 1rem;
+        
+        .back-to-home:hover {
+            background: rgba(74, 144, 226, 0.2);
+            border-color: rgba(74, 144, 226, 0.5);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
         }
-        .btn-login {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 0.75rem;
-            font-weight: 600;
+        
+        .flask-icon {
+            width: 100%;
+            height: 100%;
+            stroke: #4a90e2;
+            stroke-width: 2;
+            fill: none;
+            filter: drop-shadow(0 0 10px rgba(74, 144, 226, 0.5));
+        }
+        
+        .brand-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(74, 144, 226, 0.5);
+        }
+        
+        .brand-subtitle {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 300;
             letter-spacing: 0.5px;
         }
-        .btn-login:hover {
-            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        
+        .login-body {
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.02);
         }
+        
+        .form-floating {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        /* Inputs agora usam exclusivamente Bootstrap (form-floating + utilities). */
+        
+        .btn-login {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-login:hover {
+            background: linear-gradient(135deg, #357abd 0%, #2968a3 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(74, 144, 226, 0.3);
+        }
+        
+        .btn-login:hover::before {
+            left: 100%;
+        }
+        
         .register-link {
             text-align: center;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e9ecef;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(74, 144, 226, 0.2);
         }
+        
+        .register-link p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0;
+        }
+        
         .register-link a {
-            color: #667eea;
+            color: #4a90e2;
             text-decoration: none;
             font-weight: 500;
+            transition: all 0.3s ease;
         }
+        
         .register-link a:hover {
-            color: #764ba2;
-            text-decoration: underline;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+        }
+        
+        .alert {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #ff6b7a;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="login-card">
+            <a href="{% url 'landing_page' %}" class="back-to-home">
+                <i class="bi bi-arrow-left me-1"></i>
+                Voltar
+            </a>
             <div class="login-header">
-                <div class="brand-icon">
-                    <i class="bi bi-chat-dots-fill"></i>
+                <div class="brand-logo">
+                    <img src="{% static 'core/images/Logo Becker chat.png' %}" alt="Becker Chat Logo">
+                    <h1 class="brand-title">BECKER CHAT</h1>
                 </div>
-                <h2 class="mb-0">Chat Fácil</h2>
-                <p class="mb-0 opacity-75">Faça login para acessar seu dashboard</p>
             </div>
             
             <div class="login-body">
@@ -106,36 +280,37 @@
                 <form method="post">
                      {% csrf_token %}
                     
-                    <div class="form-floating mb-3">
-                        <input type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" required="" id="id_username" class="form-control" placeholder="Usuário">
-                        <label for="id_username">
-                            <i class="bi bi-person me-1"></i>
-                            Usuário
-                        </label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text bg-transparent text-primary border-1 border-primary-subtle">
+                            <i class="bi bi-person"></i>
+                        </span>
+                        <input type="text" class="form-control" id="id_username" name="username" placeholder="Usuário" required autocomplete="username" autofocus autocapitalize="none" maxlength="150" aria-label="Usuário">
                     </div>
                     
-                    <div class="form-floating mb-4">
-                        <input type="password" name="password" autocomplete="current-password" required="" id="id_password" class="form-control" placeholder="Senha">
-                        <label for="id_password">
-                            <i class="bi bi-lock me-1"></i>
-                            Senha
-                        </label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text bg-transparent text-primary border-1 border-primary-subtle">
+                            <i class="bi bi-lock"></i>
+                        </span>
+                        <input type="password" class="form-control" id="id_password" name="password" placeholder="Senha" required autocomplete="current-password" aria-label="Senha">
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword" aria-label="Mostrar/ocultar senha">
+                            <i class="bi bi-eye" id="toggleIcon"></i>
+                        </button>
                     </div>
                     
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary btn-login">
-                            <i class="bi bi-box-arrow-in-right me-2"></i>
+                            <i class="bi bi-arrow-right-circle me-2"></i>
                             Entrar
                         </button>
                     </div>
                 </form>
                 
                 <div class="register-link">
-                    <p class="text-muted mb-0">
-                        Não tem uma conta? 
+                    <p class="mb-0">
+                        Novo no BeckerChat? 
                         <a href="{% url 'register' %}">
-                            <i class="bi bi-person-plus me-1"></i>
-                            Registre-se aqui
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Criar conta
                         </a>
                     </p>
                 </div>
@@ -145,5 +320,23 @@
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('id_password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            }
+        });
+    </script>
 </body>
 </html>
